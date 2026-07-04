@@ -1,47 +1,39 @@
-# PIB Mumbai Press Release Automation
+# PressRelease-Automation
 
-## Overview
-
-PIB Mumbai Press Release Automation is a Python-based automation project that extracts Marathi press releases published on the Press Information Bureau (PIB) Mumbai website and compiles them into a well-formatted PDF document.
-
-The project automatically navigates the PIB website, extracts every press release for a selected month, stores the extracted data in a checkpoint file, generates an HTML document, and finally converts the HTML into a print-ready PDF.
-
-The application has been designed to handle large volumes of articles while ensuring reliability through automatic retries, checkpoint recovery, and logging.
+A Python automation project that scrapes Marathi press releases published by the Press Information Bureau (PIB) Mumbai, organizes them month-wise, and generates clean HTML and print-ready PDF archives.
 
 ---
 
-# Features
+## Features
 
-* Scrapes all PIB Mumbai Marathi press releases for a selected month.
-* Automatic extraction of:
-
-  * Ministry Name
-  * Press Release Title
-  * Publication Date
-  * Complete Article Content
-* Removes duplicate paragraphs.
-* Automatically removes PIB social media/footer information.
-* Preserves important bold text from the original article.
-* Saves extracted data into JSON checkpoints.
-* Resume scraping from the last completed day if interrupted.
-* Automatic retry mechanism for temporary network failures.
-* Generates clean HTML output.
-* Converts HTML into a print-ready PDF using Playwright.
-* Generates execution logs.
-* Well-structured modular codebase.
+- Scrapes all Marathi press releases for a selected month.
+- Automatically extracts:
+  - Ministry Name
+  - Press Release Title
+  - Publication Date
+  - Complete Article Content
+- Removes duplicate paragraphs.
+- Cleans footer, navigation, and social media sections.
+- Preserves important formatting such as bold text.
+- Stores extracted data as JSON checkpoints.
+- Resumes automatically if the process is interrupted.
+- Retries failed requests to improve reliability.
+- Generates structured HTML output.
+- Converts HTML into a print-ready PDF using Playwright (Chromium).
+- Maintains execution logs for debugging.
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
-PBI_Automation_articles/
+PressRelease-Automation/
 │
-├── article_worker.py          # Extracts a single article
-├── scrape_month.py            # Main scraper
-├── generate_pdf.py            # HTML and PDF generation
+├── article_worker.py          # Extracts individual articles
+├── scrape_month.py            # Monthly scraper
+├── generate_pdf.py            # HTML & PDF generator
 ├── scraper.py                 # Playwright wrapper
-├── utils.py                   # Helper functions
+├── utils.py                   # Helper utilities
 ├── config.py                  # Configuration
 │
 ├── fonts/
@@ -53,31 +45,45 @@ PBI_Automation_articles/
 │
 ├── logs/
 │
+├── sample_output/
+│   ├── PIB_Mumbai_January_2026.html
+│   └── PIB_Mumbai_January_2026.pdf
+│
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-# Technologies Used
+## Technologies Used
 
-* Python 3.x
-* Playwright
-* BeautifulSoup4
-* HTML
-* CSS
-* JSON
+- Python 3.x
+- Playwright
+- BeautifulSoup4
+- HTML
+- CSS
+- JSON
+- ReportLab
 
 ---
 
-# Python Libraries
+## Installation
 
-Install the required packages using:
+Clone the repository:
 
 ```bash
-pip install playwright beautifulsoup4
+git clone https://github.com/<your-username>/PressRelease-Automation.git
+
+cd PressRelease-Automation
 ```
 
-After installing Playwright, install the browser:
+Install the required Python packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+Install the Playwright browser:
 
 ```bash
 playwright install chromium
@@ -85,167 +91,133 @@ playwright install chromium
 
 ---
 
-# How It Works
+## Usage
 
-## Step 1 – Select Month
+### Step 1 — Scrape Press Releases
 
-When the program starts, it asks for the month number.
-
-Example:
-
-```text
-Enter Month Number : 1
-```
-
----
-
-## Step 2 – Scraping
-
-The scraper:
-
-* Opens the PIB Mumbai Marathi Press Release page.
-* Selects the required day, month, and year.
-* Collects every PRID available for that date.
-* Opens each press release.
-* Extracts the required information.
-* Saves the day's progress into a checkpoint file.
-
----
-
-## Step 3 – Checkpoint System
-
-After every day is completed, the scraper stores the extracted data inside:
-
-```text
-output/checkpoints/
-```
-
-If the program stops unexpectedly, simply run it again.
-
-The scraper resumes automatically from the next incomplete day.
-
----
-
-## Step 4 – HTML Generation
-
-Once scraping finishes, the program generates a structured HTML document.
-
-The HTML includes:
-
-* Month heading
-* Day-wise organization
-* Article numbering
-* Titles
-* Ministry names
-* Publication dates
-* Paragraph formatting
-
----
-
-## Step 5 – PDF Generation
-
-The HTML document is rendered using Playwright Chromium.
-
-The PDF includes:
-
-* Proper page margins
-* Bold headings
-* Justified paragraphs
-* Page numbers
-* Print-friendly formatting
-
----
-
-# Output
-
-Generated files are stored inside:
-
-```text
-output/
-```
-
-Checkpoint:
-
-```text
-output/checkpoints/January_2026.json
-```
-
-HTML:
-
-```text
-output/html/PIB_Mumbai_January_2026.html
-```
-
-PDF:
-
-```text
-output/pdf/PIB_Mumbai_January_2026.pdf
-```
-
-Logs:
-
-```text
-logs/January_2026.txt
-```
-
----
-
-# Running the Project
-
-## Step 1
-
-Run the scraper:
+Run:
 
 ```bash
 python scrape_month.py
 ```
 
-After successful completion, a checkpoint JSON file will be created.
+The program will ask for the month number.
+
+Example:
+
+```text
+Enter Month Number: 1
+```
+
+The scraper will:
+
+- Navigate the PIB Mumbai Marathi website
+- Search each day of the selected month
+- Collect available press releases
+- Extract article details
+- Save progress in checkpoint files
 
 ---
 
-## Step 2
+### Step 2 — Generate HTML & PDF
 
-Generate the PDF:
+Run:
 
 ```bash
 python generate_pdf.py
 ```
 
-This reads the checkpoint file and creates the HTML and PDF.
+The script will:
+
+- Read the generated checkpoint file
+- Create a formatted HTML document
+- Convert the HTML into a PDF using Playwright
 
 ---
 
-# Reliability Features
+## Output
 
-The project includes several mechanisms to improve reliability:
+Generated files are stored inside the `output/` directory.
 
-* Automatic retry on navigation failures.
-* Resume support using checkpoints.
-* Duplicate paragraph removal.
-* Footer and social media removal.
-* Detailed execution logs.
-* Structured modular architecture.
+```text
+output/
+│
+├── checkpoints/
+│   └── January_2026.json
+│
+├── html/
+│   └── PIB_Mumbai_January_2026.html
+│
+└── pdf/
+    └── PIB_Mumbai_January_2026.pdf
+```
 
----
+Execution logs are stored in:
 
-# Future Improvements
-
-Possible enhancements include:
-
-* Microsoft Word (.docx) export.
-* Automatic Table of Contents.
-* PDF bookmarks.
-* Cover page with official logos.
-* Image extraction from press releases.
-* Searchable index.
-* Command-line arguments for month/year selection.
-* Standalone executable using PyInstaller.
-* Multi-language support.
+```text
+logs/
+```
 
 ---
 
-# Author
+## Workflow
+
+```text
+Select Month
+      │
+      ▼
+Scrape Daily Articles
+      │
+      ▼
+Extract Article Content
+      │
+      ▼
+Save Checkpoint
+      │
+      ▼
+Generate HTML
+      │
+      ▼
+Generate PDF
+```
+
+---
+
+## Reliability Features
+
+- Automatic retry mechanism
+- Resume support using checkpoints
+- Duplicate content removal
+- Footer and unnecessary content cleanup
+- Modular architecture
+- Execution logging
+
+---
+
+## Sample Output
+
+The repository includes sample generated files in the `output/` directory.
+
+- Sample HTML Output
+- Sample PDF Output
+
+---
+
+## Future Improvements
+
+- Microsoft Word (.docx) export
+- Automatic table of contents
+- PDF bookmarks
+- Cover page generation
+- Image extraction
+- Searchable PDF index
+- Command-line arguments
+- Standalone executable using PyInstaller
+- Multi-language support
+
+---
+
+## Author
 
 **Rushikesh Zanwar**
 
@@ -255,8 +227,16 @@ Python Automation Project
 
 ---
 
-# License
+## Disclaimer
+
+This is an independent educational and automation project developed for learning and research purposes.
+
+It is **not affiliated with, endorsed by, or maintained by the Press Information Bureau (PIB)** or the Government of India.
+
+All press release content remains the intellectual property of the Press Information Bureau (PIB), Government of India. This project only automates the extraction and compilation of publicly available information without claiming ownership of the original content.
+
+---
+
+## License
 
 This project is intended for educational and research purposes.
-
-All press release content belongs to the Press Information Bureau (PIB), Government of India. This project only automates the extraction and compilation of publicly available information and does not claim ownership of the original content.

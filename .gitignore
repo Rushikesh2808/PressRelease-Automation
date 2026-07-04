@@ -14,12 +14,12 @@ venv/
 # Logs
 logs/
 
-# Generated Output
-output/
-
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Generated Output
+output/
 
 # Checkpoint files (if generated)
 checkpoint.json
