@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.env/
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+
+# Generated Output
+output/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Checkpoint files (if generated)
+checkpoint.json
+
+# Environment variables
+.env
