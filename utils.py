@@ -246,8 +246,32 @@ def retry_goto(scraper, url, wait_seconds=10):
     
 def wait_for_search_results_update(scraper):
 
-    previous_count = -1
+    # Wait for ASP.NET AJAX request to finish
+    try:
 
+        scraper.page.wait_for_function(
+            """
+            () => {
+
+                if (
+                    typeof(Sys) === "undefined" ||
+                    !Sys.WebForms
+                )
+                    return true;
+
+                return !Sys.WebForms.PageRequestManager
+                    .getInstance()
+                    .get_isInAsyncPostBack();
+
+            }
+            """,
+            timeout=15000
+        )
+
+    except:
+        pass
+
+    previous_count = -1
     stable = 0
 
     while stable < 3:
@@ -257,6 +281,8 @@ def wait_for_search_results_update(scraper):
         count = len(
             extract_prids(html)
         )
+
+        print(f"Current PRIDs : {count}")
 
         if count == previous_count:
 
@@ -268,10 +294,9 @@ def wait_for_search_results_update(scraper):
 
         previous_count = count
 
-        scraper.page.wait_for_timeout(300)
+        scraper.page.wait_for_timeout(500)
 
     return previous_count
-
 
 # =====================================================
 # OUTPUT FOLDERS

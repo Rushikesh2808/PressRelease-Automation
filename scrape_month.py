@@ -148,33 +148,45 @@ for day in range(
 
     wait_for_search_results_update(scraper)
     
-    attempt = 1
+    print("\nWaiting for search results to stabilize...")
 
-    while True:
+    last_count = -1
+    same_count = 0
+
+    for check in range(20):
+
+        time.sleep(0.5)
 
         html = scraper.page.content()
 
         prids = extract_prids(html)
 
-        print(f"Attempt {attempt} : {len(prids)} articles")
-        scraper.page.wait_for_timeout(500)
+        count = len(prids)
 
-        if len(prids) > 0:
+        print(f"Check {check+1}: {count} articles")
+
+        if count == last_count:
+
+            same_count += 1
+
+        else:
+
+            same_count = 0
+
+        last_count = count
+
+        if same_count >= 2:
+
             break
-
-        if attempt == 3:
-            break
-
-        print("Reloading search...")
-
-        retry_goto(
-            scraper,
-            BASE_URL
-        )
         
-        scraper.page.wait_for_selector(
-            "#ContentPlaceHolder1_ddlday"
-        )
+    print(f"\nFinal Count : {len(prids)}")
+    
+    if len(prids) < 5:
+
+        print("\nVery few articles detected.")
+        print("Reloading search page...")
+
+        retry_goto(scraper, BASE_URL)
 
         scraper.page.select_option(
             "#ContentPlaceHolder1_ddlday",
@@ -195,10 +207,27 @@ for day in range(
             label=YEAR
         )
 
-        wait_for_search_results_update(scraper)
+        count1 = wait_for_search_results_update(scraper)
 
-        attempt += 1
+        scraper.page.wait_for_timeout(1500)
 
+        count2 = len(
+            extract_prids(
+                scraper.page.content()
+            )
+        )
+
+        if count2 > count1:
+
+            print(f"More articles appeared: {count1} -> {count2}")
+
+        prids = extract_prids(
+            scraper.page.content()
+        )
+
+        time.sleep(2)
+
+        print(f"Reload Count : {len(prids)}")
 
     print(
         f"\nArticles Found : {len(prids)}"
